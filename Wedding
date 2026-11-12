@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>မောင်စိုးမိုးထိုက် & မမြတ်မိုးအိမ် | မင်္ဂလာဖိတ်စာ</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Myanmar & Elegant Serif/Script -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&family=Noto+Serif+Myanmar:wght@400;600;700&family=Padauk:wght@400;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-ivory: #fcf9f2;
+            --bg-cream: #f5efe2;
+            --rose-gold: #b77b76;
+            --crimson-seal: #8f2d36;
+            --gold-accent: #c59b47;
+            --sage-accent: #5d6e53;
+            --text-dark: #332927;
+            --text-muted: #70605c;
+        }
+
+        body {
+            font-family: 'Noto Sans Myanmar', 'Padauk', sans-serif;
+            background-color: #e8e0d3;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-serif-mm {
+            font-family: 'Noto Serif Myanmar', 'Padauk', serif;
+        }
+
+        .font-script {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Romantic Paper Texture */
+        .paper-texture {
+            background-color: var(--bg-ivory);
+            background-image: 
+                radial-gradient(rgba(197, 155, 71, 0.06) 1px, transparent 0),
+                radial-gradient(rgba(183, 123, 118, 0.05) 1px, transparent 0);
+            background-size: 26px 26px;
+            background-position: 0 0, 13px 13px;
+        }
+
+        /* Realistic Crimson & Gold Wax Seal */
+        .wax-seal {
+            background: radial-gradient(circle at 35% 30%, #b53f49 0%, #8f2d36 55%, #5c1920 100%);
+            box-shadow: 
+                0 12px 28px rgba(92, 25, 32, 0.42),
+                inset 0 2px 6px rgba(255, 225, 190, 0.45),
+                inset 0 -4px 10px rgba(45, 10, 14, 0.65);
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .wax-seal::before {
+            content: '';
+            position: absolute;
+            inset: 7px;
+            border-radius: 50%;
+            border: 2px solid rgba(235, 196, 115, 0.45);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.35), 0 1px 1px rgba(255,235,190,0.3);
+        }
+
+        .wax-seal:hover {
+            transform: scale(1.06);
+        }
+
+        .wax-seal:active {
+            transform: scale(0.95);
+        }
+
+        /* Envelope Doors Animation */
+        .envelope-door-left, .envelope-door-right {
+            transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .envelope-opened .envelope-door-left {
+            transform: translateX(-105%);
+        }
+
+        .envelope-opened .envelope-door-right {
+            transform: translateX(105%);
+        }
+
+        .envelope-opened .seal-container {
+            opacity: 0;
+            transform: scale(1.25);
+            pointer-events: none;
+        }
+
+        @keyframes crackFlash {
+            0% { opacity: 0; transform: scale(0.85); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+        .cracking .crack-svg {
+            animation: crackFlash 0.5s ease-out forwards;
+        }
+
+        /* Floating Petals */
+        .petal {
+            position: fixed;
+            top: -10%;
+            pointer-events: none;
+            z-index: 40;
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) translateX(0px);
+                opacity: 0;
+            }
+            15% { opacity: 0.75; }
+            85% { opacity: 0.75; }
+            100% {
+                transform: translateY(110vh) rotate(360deg) translateX(35px);
+                opacity: 0;
+            }
+        }
+
+        /* Arch Photo Frame */
+        .arch-frame {
+            border-radius: 9999px 9999px 14px 14px;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: floatSlow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex justify-center min-h-screen">
+
+    <!-- Floating Petals Container -->
+    <div id="petals-container" aria-hidden="true"></div>
+
+    <!-- Floating Music Toggle Button -->
+    <button id="music-btn" onclick="toggleMusic()" aria-label="Toggle Background Music" class="fixed bottom-5 right-5 z-40 w-11 h-11 rounded-full bg-[#8f2d36] text-[#fcf9f2] shadow-lg border border-[#e5c27b]/50 flex items-center justify-center hover:scale-105 active:scale-95 transition">
+        <i id="music-icon" class="fa-solid fa-volume-xmark text-sm"></i>
+    </button>
+
+    <!-- Mobile App Container -->
+    <div id="app-wrapper" class="w-full max-w-[440px] min-h-screen paper-texture shadow-2xl relative overflow-hidden">
+
+        <!-- ========================================== -->
+        <!-- 1. WAX SEAL ENVELOPE OVERLAY               -->
+        <!-- ========================================== -->
+        <div id="envelope-overlay" class="fixed inset-0 z-50 flex justify-center pointer-events-auto transition-opacity duration-700">
+            <div class="w-full max-w-[440px] h-full relative flex items-center justify-center overflow-hidden">
+                
+                <!-- Left Door -->
+                <div class="envelope-door-left absolute inset-y-0 left-0 w-1/2 paper-texture border-r border-[#dfd3be] shadow-xl flex items-center justify-end overflow-hidden">
+                    <svg class="w-[340px] h-[340px] -mr-[170px] text-[#d6c5a7] opacity-80" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="92" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="1"/>
+                        <circle cx="100" cy="100" r="66" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </div>
+
+                <!-- Right Door -->
+                <div class="envelope-door-right absolute inset-y-0 right-0 w-1/2 paper-texture border-l border-[#dfd3be] shadow-xl flex items-center justify-start overflow-hidden">
+                    <svg class="w-[340px] h-[340px] -ml-[170px] text-[#d6c5a7] opacity-80" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="92" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="1"/>
+                        <circle cx="100" cy="100" r="66" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </div>
+
+                <!-- Center Wax Seal Prompt -->
+                <div class="seal-container absolute inset-0 flex flex-col items-center justify-center z-10 px-6 transition-all duration-500">
+                    
+                    <div class="mb-10 bg-white/95 backdrop-blur-sm px-6 py-3.5 rounded-2xl shadow-md border border-[#e5d8c1] text-center animate-float">
+                        <p class="text-xs text-[#70605c] mb-1">မင်္ဂလာ ဖိတ်ကြားလွှာ</p>
+                        <p class="text-sm font-semibold text-[#332927]">ချိတ်တံဆိပ်လေးကို နှိပ်ပြီး ဖွင့်ကြည့်ပါ 💌</p>
+                    </div>
+
+                    <!-- Decorative Gold Lace Ring -->
+                    <div class="relative flex items-center justify-center">
+                        <svg class="w-72 h-72 text-[#d4be96] pointer-events-none" viewBox="0 0 300 300" fill="none">
+                            <circle cx="150" cy="150" r="136" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 5"/>
+                            <circle cx="150" cy="150" r="122" stroke="currentColor" stroke-width="1.5"/>
+                            <circle cx="150" cy="150" r="105" stroke="currentColor" stroke-width="0.8"/>
+                            <g stroke="currentColor" stroke-width="1" opacity="0.75">
+                                <ellipse cx="150" cy="22" rx="6" ry="12"/>
+                                <ellipse cx="150" cy="278" rx="6" ry="12"/>
+                                <ellipse cx="22" cy="150" rx="12" ry="6"/>
+                                <ellipse cx="278" cy="150" rx="12" ry="6"/>
+                                <ellipse cx="60" cy="60" rx="6" ry="12" transform="rotate(-45 60 60)"/>
+                                <ellipse cx="240" cy="240" rx="6" ry="12" transform="rotate(-45 240 240)"/>
+                                <ellipse cx="240" cy="60" rx="6" ry="12" transform="rotate(45 240 60)"/>
+                                <ellipse cx="60" cy="240" rx="6" ry="12" transform="rotate(45 60 240)"/>
+                            </g>
+                        </svg>
+
+                        <!-- Interactive Wax Seal Button -->
+                        <button id="wax-seal-btn" onclick="openInvitation()" aria-label="Open Invitation" class="wax-seal w-32 h-32 rounded-full flex flex-col items-center justify-center cursor-pointer z-20 absolute focus:outline-none">
+                            <span class="font-serif-mm text-2xl font-bold tracking-wider text-[#f7e3b5] drop-shadow">စ <span class="text-base text-[#e5c27b]">&</span> မ</span>
+                            <span class="font-playfair text-[9px] uppercase tracking-[0.22em] text-[#ebd29d] mt-1">Tap to Open</span>
+                            
+                            <!-- Crack Lines SVG -->
+                            <svg class="crack-svg absolute inset-0 w-full h-full opacity-0 pointer-events-none" viewBox="0 0 100 100" fill="none">
+                                <path d="M50 5 L46 32 L54 48 L45 72 L52 95" stroke="#fcf9f2" stroke-width="2.5" stroke-linecap="round"/>
+                                <path d="M46 32 L30 42" stroke="#fcf9f2" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M54 48 L70 55" stroke="#fcf9f2" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <p class="mt-9 font-script text-3xl text-[#8f2d36]">Soe Moe Htike & Myat Moe Eain</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MAIN INVITATION CONTENT                    -->
+        <!-- ========================================== -->
+        <main id="main-content" class="px-5 py-8 space-y-11 opacity-0 transition-opacity duration-1000">
+
+            <!-- 2. HERO SECTION -->
+            <section class="text-center pt-1">
+                <p class="text-xs tracking-widest text-[#8f2d36] font-medium mb-1">မင်္ဂလာ ဖိတ်ကြားလွှာ</p>
+                <h1 class="font-serif-mm text-base font-semibold text-[#332927] mb-5">ချစ်ခင်ရပါသော ဧည့်သည်တော် သို့</h1>
+
+                <!-- Ornate Gold & Rose Border Frame -->
+                <div class="border-2 border-[#d4be96] p-2 rounded-3xl bg-white/75 shadow-sm">
+                    <div class="border border-[#e6d7bd] p-4 rounded-2xl">
+                        
+                        <!-- Arched Couple Photo -->
+                        <div class="relative mx-auto w-60 h-72 arch-frame overflow-hidden shadow-md border-4 border-[#fcf9f2] mb-5 bg-[#f5efe2]">
+                            <img 
+                                src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80" 
+                                alt="မောင်စိုးမိုးထိုက် နှင့် မမြတ်မိုးအိမ်" 
+                                class="w-full h-full object-cover object-center"
+                                onerror="this.src='https://placehold.co/600x800/8f2d36/fcf9f2?text=Soe+Moe+Htike+%26+Myat+Moe+Eain'"
+                            >
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+                        </div>
+
+                        <p class="font-script text-2xl text-[#c59b47] mb-1">Wedding Invitation</p>
+                        
+                        <div class="space-y-1 my-2">
+                            <h2 class="font-serif-mm text-xl font-bold text-[#8f2d36]">မောင်စိုးမိုးထိုက်</h2>
+                            <p class="text-xs text-[#c59b47] font-semibold">နှင့်</p>
+                            <h2 class="font-serif-mm text-xl font-bold text-[#8f2d36]">မမြတ်မိုးအိမ်</h2>
+                        </div>
+
+                        <!-- Date & Time Pill -->
+                        <div class="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 my-3 border border-[#d4be96] rounded-xl text-xs text-[#332927] bg-[#fcf9f2]">
+                            <span class="font-semibold text-[#8f2d36]">၂၀၂၆ ခုနှစ်၊ ဒီဇင်ဘာလ ၃ ရက် နှင့် ၄ ရက်</span>
+                            <span class="text-[#c59b47]">|</span>
+                            <span>နံနက် ၉:၀၀ နာရီ</span>
+                        </div>
+
+                        <p class="text-xs leading-relaxed text-[#5d6e53] font-medium mt-1">
+                            ဦးဇော်သက် + ဒေါ်သန့်သန့်ဦးတို့၏ မင်္ဂလာနေအိမ် မဏ္ဍပ်
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Scroll Cue -->
+                <div class="mt-5 flex flex-col items-center text-[#70605c] animate-bounce">
+                    <span class="text-[11px] mb-1">အောက်သို့ ဆက်လက်ဖတ်ရှုပါ</span>
+                    <i class="fa-solid fa-chevron-down text-xs text-[#c59b47]"></i>
+                </div>
+            </section>
+
+            <!-- 3. FORMAL BURMESE INVITATION CARD -->
+            <section class="bg-white/90 border border-[#d4be96] rounded-3xl p-6 shadow-md relative overflow-hidden text-center">
+                <!-- Corner Ornaments -->
+                <div class="flex justify-between text-[#c59b47] text-xs mb-2">
+                    <span>❖</span>
+                    <span class="px-3 py-0.5 rounded-full bg-[#f5efe2] text-[#8f2d36] font-semibold text-[11px]">မင်္ဂလာ ဧည့်ခံပွဲ ဖိတ်ကြားလွှာ</span>
+                    <span>❖</span>
+                </div>
+
+                <!-- Parents & Couple Details -->
+                <div class="space-y-2.5 my-4 text-xs leading-relaxed text-[#332927]">
+                    <div>
+                        <p class="font-medium text-[#544643]">ဦးသုမောင်မောင် + ဒေါ်သင်းသင်းလှိုင် တို့၏သားငယ်</p>
+                        <p class="font-serif-mm text-lg font-bold text-[#8f2d36] mt-0.5">မောင်စိုးမိုးထိုက်</p>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-3 py-1">
+                        <span class="h-[1px] w-10 bg-[#d4be96]"></span>
+                        <span class="text-xs font-semibold text-[#c59b47]">နှင့်</span>
+                        <span class="h-[1px] w-10 bg-[#d4be96]"></span>
+                    </div>
+
+                    <div>
+                        <p class="font-medium text-[#544643]">ဦးဇော်သက် + ဒေါ်သန့်သန့်ဦး တို့၏ တစ်ဦးတည်းသော သမီး</p>
+                        <p class="font-serif-mm text-lg font-bold text-[#8f2d36] mt-0.5">မမြတ်မိုးအိမ်</p>
+                    </div>
+                </div>
+
+                <!-- Invitation Message -->
+                <div class="my-4 py-3.5 px-3 border-t border-b border-[#e6d7bd] bg-[#fcf9f2]/70 rounded-xl">
+                    <p class="text-xs leading-loose text-[#332927]">
+                        တို့၏ မင်္ဂလာ ဧည့်ခံပွဲ အခမ်းအနားသို့ ကြွရောက် ချီးမြှင့်ပေးကြပါရန် ခင်မင်ရင်းနှီးစွာဖြင့် လေးစားစွာ ဖိတ်ကြားအပ်ပါသည်။
+                    </p>
+                </div>
+
+                <!-- Event Details -->
+                <div class="space-y-2 text-xs text-left bg-[#f5efe2]/60 p-4 rounded-2xl border border-[#e6d7bd]">
+                    <div class="flex items-start gap-2.5">
+                        <i class="fa-regular fa-calendar text-[#8f2d36] mt-0.5 w-4 text-center"></i>
+                        <div>
+                            <span class="font-semibold text-[#8f2d36]">နေ့ရက် - </span>
+                            <span>၂၀၂၆ ခုနှစ်၊ ဒီဇင်ဘာလ ၃ ရက် နှင့် ၄ ရက် (ကြာသပတေး၊ သောကြာ)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <i class="fa-regular fa-clock text-[#8f2d36] mt-0.5 w-4 text-center"></i>
+                        <div>
+                            <span class="font-semibold text-[#8f2d36]">အချိန် - </span>
+                            <span>နံနက် ၉:၀၀ နာရီ</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <i class="fa-solid fa-location-dot text-[#8f2d36] mt-0.5 w-4 text-center"></i>
+                        <div>
+                            <span class="font-semibold text-[#8f2d36]">နေရာ - </span>
+                            <span>ဦးဇော်သက် + ဒေါ်သန့်သန့်ဦးတို့၏ မင်္ဂလာနေအိမ် မဏ္ဍပ်</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. INTERACTIVE CALENDAR & LIVE COUNTDOWN -->
+            <section class="bg-gradient-to-br from-[#8f2d36] to-[#691e25] text-[#fcf9f2] rounded-3xl p-6 shadow-lg relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white/5 pointer-events-none"></div>
+
+                <div class="text-center mb-4">
+                    <p class="text-xs text-[#f2d9b3] mb-1">မင်္ဂလာရက်မြတ်လေး မှတ်ထားပေးပါ</p>
+                    <h3 class="font-serif-mm text-xl font-bold tracking-wide">ဒီဇင်ဘာလ ၂၀၂၆</h3>
+                </div>
+
+                <!-- Burmese Calendar Grid (Dec 2026 starts on Tuesday, highlighting Dec 3 & 4) -->
+                <div class="bg-black/20 rounded-2xl p-4 mb-5 border border-[#e5c27b]/25">
+                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-[#f2d9b3] mb-2.5 font-medium">
+                        <div>တနင်္ဂနွေ</div>
+                        <div>တနင်္လာ</div>
+                        <div>အင်္ဂါ</div>
+                        <div>ဗုဒ္ဓဟူး</div>
+                        <div>ကြာသပတေး</div>
+                        <div>သောကြာ</div>
+                        <div>စနေ</div>
+                    </div>
+                    <div id="calendar-days" class="grid grid-cols-7 gap-y-2 text-center text-sm items-center">
+                        <!-- Populated via JS -->
+                    </div>
+                    <div class="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-center gap-2 text-xs text-[#f7e3b5]">
+                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#c59b47]"></span>
+                        <span>ဒီဇင်ဘာ ၃ ရက် (ကြာသပတေး) နှင့် ၄ ရက် (သောကြာ)</span>
+                    </div>
+                </div>
+
+                <!-- Live Countdown to Dec 3, 2026 09:00 AM -->
+                <p class="text-center text-[11px] text-[#f2d9b3] mb-2.5">မင်္ဂလာပွဲ ကျင်းပရန် လိုတော့သည့်အချိန်</p>
+                <div class="grid grid-cols-4 gap-2 text-center mb-5">
+                    <div class="bg-black/25 rounded-xl py-2.5 px-1 border border-[#e5c27b]/30">
+                        <div id="cd-days" class="text-xl font-bold text-[#f7e3b5]">၀၀</div>
+                        <div class="text-[11px] text-[#f2d9b3]">ရက်</div>
+                    </div>
+                    <div class="bg-black/25 rounded-xl py-2.5 px-1 border border-[#e5c27b]/30">
+                        <div id="cd-hours" class="text-xl font-bold text-[#f7e3b5]">၀၀</div>
+                        <div class="text-[11px] text-[#f2d9b3]">နာရီ</div>
+                    </div>
+                    <div class="bg-black/25 rounded-xl py-2.5 px-1 border border-[#e5c27b]/30">
+                        <div id="cd-mins" class="text-xl font-bold text-[#f7e3b5]">၀၀</div>
+                        <div class="text-[11px] text-[#f2d9b3]">မိနစ်</div>
+                    </div>
+                    <div class="bg-black/25 rounded-xl py-2.5 px-1 border border-[#e5c27b]/30">
+                        <div id="cd-secs" class="text-xl font-bold text-[#f7e3b5]">၀၀</div>
+                        <div class="text-[11px] text-[#f2d9b3]">စက္ကန့်</div>
+                    </div>
+                </div>
+
+                <!-- Save to Google Calendar Button -->
+                <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=မောင်စိုးမိုးထိုက်+%26+မမြတ်မိုးအိမ်+မင်္ဂလာဧည့်ခံပွဲ&dates=20261203T023000Z/20261204T063000Z&details=ဦးသုမောင်မောင်+%2B+ဒေါ်သင်းသင်းလှိုင်+တို့၏သားငယ်+မောင်စိုးမိုးထိုက်+နှင့်+ဦးဇော်သက်+%2B+ဒေါ်သန့်သန့်ဦး+တို့၏+တစ်ဦးတည်းသော+သမီး+မမြတ်မိုးအိမ်+တို့၏+မင်္ဂလာဧည့်ခံပွဲ&location=ဦးဇော်သက်+%2B+ဒေါ်သန့်သန့်ဦးတို့၏+မင်္ဂလာနေအိမ်+မဏ္ဍပ်" target="_blank" rel="noopener" class="w-full py-3 px-4 rounded-xl bg-[#fcf9f2] text-[#8f2d36] font-semibold text-xs flex items-center justify-center gap-2 shadow hover:bg-white transition">
+                    <i class="fa-regular fa-calendar-plus text-sm"></i>
+                    <span>Google Calendar တွင် မှတ်သားမည်</span>
+                </a>
+            </section>
+
+            <!-- 5. PRE-WEDDING PHOTO GALLERY -->
+            <section>
+                <div class="text-center mb-5">
+                    <p class="font-script text-2xl text-[#c59b47]">Our Memories</p>
+                    <h3 class="font-serif-mm text-lg font-bold text-[#8f2d36]">အမှတ်တရ ပုံရိပ်များ</h3>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white p-2 pb-4 rounded-2xl shadow-sm border border-[#e6d7bd] -rotate-1 hover:rotate-0 transition-transform">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden bg-[#f5efe2]">
+                            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80" alt="Moment 1" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x500/b77b76/ffffff?text=Photo+1'">
+                        </div>
+                    </div>
+                    <div class="bg-white p-2 pb-4 rounded-2xl shadow-sm border border-[#e6d7bd] rotate-1 translate-y-2 hover:rotate-0 transition-transform">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden bg-[#f5efe2]">
+                            <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=600&q=80" alt="Moment 2" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x500/8f2d36/ffffff?text=Photo+2'">
+                        </div>
+                    </div>
+                    <div class="col-span-2 bg-white p-2.5 pb-5 rounded-2xl shadow-sm border border-[#e6d7bd] mt-2">
+                        <div class="aspect-[16/10] rounded-xl overflow-hidden bg-[#f5efe2]">
+                            <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80" alt="Together Forever" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/800x500/c59b47/ffffff?text=Together+Forever'">
+                        </div>
+                        <p class="font-script text-center text-2xl text-[#8f2d36] mt-2">Forever & Always</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. VENUE & LOCATION CARD -->
+            <section class="text-center bg-white/90 border border-[#d4be96] rounded-3xl p-6 shadow-sm">
+                <p class="text-xs text-[#70605c] mb-2">မင်္ဂလာပွဲ ကျင်းပမည့် နေရာ</p>
+
+                <!-- Line-Art Traditional Mandat / Pavilion SVG -->
+                <svg class="w-48 h-24 mx-auto text-[#c59b47] mb-3" viewBox="0 0 240 110" fill="none" stroke="currentColor" stroke-width="1.4">
+                    <path d="M20 45 L120 12 L220 45 Z" stroke-linejoin="round"/>
+                    <path d="M45 45 L120 20 L195 45" stroke-linejoin="round"/>
+                    <line x1="35" y1="45" x2="35" y2="95"/>
+                    <line x1="65" y1="45" x2="65" y2="95"/>
+                    <line x1="175" y1="45" x2="175" y2="95"/>
+                    <line x1="205" y1="45" x2="205" y2="95"/>
+                    <path d="M85 95 L85 65 C85 48, 155 48, 155 65 L155 95"/>
+                    <line x1="15" y1="95" x2="225" y2="95"/>
+                    <line x1="10" y1="100" x2="230" y2="100"/>
+                </svg>
+
+                <h3 class="font-serif-mm text-base font-bold text-[#8f2d36] leading-relaxed mb-2">
+                    ဦးဇော်သက် + ဒေါ်သန့်သန့်ဦးတို့၏<br>မင်္ဂလာနေအိမ် မဏ္ဍပ်
+                </h3>
+
+                <p class="text-xs text-[#70605c] bg-[#fcf9f2] border border-[#e6d7bd] py-2.5 px-4 rounded-xl mb-5">
+                    ၂၀၂၆ ခုနှစ်၊ ဒီဇင်ဘာလ ၃ ရက် နှင့် ၄ ရက်<br>
+                    နံနက် ၉:၀၀ နာရီ အချိန်
+                </p>
+
+                <a href="https://www.google.com/maps/search/?api=1&query=Myanmar" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 w-full py-3 px-5 rounded-full bg-[#8f2d36] text-white text-xs font-medium shadow hover:bg-[#732129] transition">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>Google Map တွင် လမ်းညွှန်ကြည့်မည်</span>
+                </a>
+            </section>
+
+            <!-- 7. WAVE MONEY DIGITAL GIFT SECTION (WAVE PAY ONLY) -->
+            <section class="text-center bg-gradient-to-b from-[#fffdf0] to-[#fff9d6] border-2 border-[#f7d000] rounded-3xl p-6 shadow-md relative overflow-hidden">
+                <!-- Top Wave Accent Bar -->
+                <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#f7d000] text-[#0054a6] font-bold text-xs mb-3 shadow-xs">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Wave Money (WavePay)</span>
+                </div>
+
+                <h3 class="font-serif-mm text-lg font-bold text-[#0054a6] mb-1">မင်္ဂလာ လက်ဖွဲ့ ပေးပို့ရန်</h3>
+                <p class="text-xs text-[#544643] mb-5">ကိုယ်တိုင် ကြွရောက်ချီးမြှင့်ခြင်းသည်သာ အကြီးမားဆုံး မင်္ဂလာလက်ဖွဲ့ ဖြစ်ပါသည်</p>
+
+                <!-- Clean Wave Money QR Box -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-[#0054a6]/20 inline-block shadow-sm mb-4">
+                    <canvas id="wave-qr-canvas" width="180" height="180" class="mx-auto"></canvas>
+                </div>
+
+                <div class="space-y-1 mb-5">
+                    <p class="text-xs font-semibold text-[#0054a6]">မောင်စိုးမိုးထိုက် / မမြတ်မိုးအိမ်</p>
+                    <p id="wave-phone" class="text-xl font-bold tracking-wider text-[#332927]">09428935889</p>
+                </div>
+
+                <div class="space-y-2.5">
+                    <button onclick="copyWaveNumber()" class="w-full py-3.5 px-4 rounded-full bg-[#0054a6] text-white text-xs font-semibold flex items-center justify-center gap-2 shadow hover:bg-[#004080] active:scale-[0.99] transition">
+                        <i class="fa-regular fa-copy text-sm"></i>
+                        <span>WavePay နံပါတ် (09428935889) ကူးယူမည်</span>
+                    </button>
+                    <button onclick="downloadWaveQR()" class="w-full py-3 px-4 rounded-full bg-[#f7d000] text-[#0054a6] text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#ebC500] transition">
+                        <i class="fa-solid fa-download"></i>
+                        <span>QR Code ပုံကို သိမ်းမည်</span>
+                    </button>
+                </div>
+
+                <p class="text-[11px] leading-relaxed text-[#544643] mt-4">
+                    WavePay App မှတစ်ဆင့် လက်ဖွဲ့ပေးပို့လိုပါက အထက်ပါ ဖုန်းနံပါတ်ကို ကူးယူ၍ဖြစ်စေ၊ QR ပုံကို သိမ်းဆည်း၍ဖြစ်စေ အလွယ်တကူ လွှဲပို့နိုင်ပါသည်။
+                </p>
+            </section>
+
+            <!-- 8. RSVP & WISHES GUESTBOOK (LOCALSTORAGE PERSISTED) -->
+            <section class="bg-white/90 border border-[#d4be96] rounded-3xl p-6 shadow-sm">
+                <div class="text-center mb-5">
+                    <h3 class="font-serif-mm text-lg font-bold text-[#8f2d36]">တက်ရောက်မှု အတည်ပြုရန်နှင့် ဆုတောင်းစကား</h3>
+                    <p class="text-xs text-[#70605c] mt-1">မင်္ဂလာမောင်နှံအတွက် ဆုမွန်ကောင်းများ ရေးသားပေးခဲ့ပါဦး</p>
+                </div>
+
+                <form id="rsvp-form" onsubmit="handleRsvpSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-[#332927] mb-1">ဧည့်သည်တော် အမည်</label>
+                        <input type="text" id="guest-name" required placeholder="ဥပမာ - ကိုအောင်အောင် မိသားစု" class="w-full bg-[#fcf9f2] border border-[#d4be96] rounded-xl px-3.5 py-2.5 text-sm text-[#332927] focus:outline-none focus:border-[#8f2d36]">
+                    </div>
+
+                    <!-- Attendance Radio -->
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#d4be96] bg-[#fcf9f2] cursor-pointer hover:border-[#8f2d36] transition">
+                            <input type="radio" name="attendance" value="တက်ရောက်ပါမည်" checked onchange="toggleGuestCount(true)" class="accent-[#8f2d36]">
+                            <span class="text-xs font-medium">တက်ရောက်ပါမည်</span>
+                        </label>
+                        <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#d4be96] bg-[#fcf9f2] cursor-pointer hover:border-[#8f2d36] transition">
+                            <input type="radio" name="attendance" value="မတက်ရောက်နိုင်ပါ" onchange="toggleGuestCount(false)" class="accent-[#8f2d36]">
+                            <span class="text-xs font-medium">မတက်ရောက်နိုင်ပါ</span>
+                        </label>
+                    </div>
+
+                    <!-- Number of Guests -->
+                    <div id="guest-count-box">
+                        <label class="block text-xs font-semibold text-[#332927] mb-1.5">တက်ရောက်မည့် လူဦးရေ</label>
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="changeCount(-1)" class="w-9 h-9 rounded-full border border-[#d4be96] bg-[#fcf9f2] text-[#8f2d36] flex items-center justify-center active:scale-95">
+                                <i class="fa-solid fa-minus text-xs"></i>
+                            </button>
+                            <span id="count-display" class="text-base font-bold text-[#8f2d36] w-8 text-center">၂</span>
+                            <button type="button" onclick="changeCount(1)" class="w-9 h-9 rounded-full border border-[#d4be96] bg-[#fcf9f2] text-[#8f2d36] flex items-center justify-center active:scale-95">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                            </button>
+                            <span class="text-xs text-[#70605c]">ဦး</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-[#332927] mb-1">ဆုတောင်းစကား</label>
+                        <textarea id="guest-wish" rows="2" required placeholder="မောင်စိုးမိုးထိုက် နှင့် မမြတ်မိုးအိမ် တို့ ရာသက်ပန် ပျော်ရွှင်ချမ်းမြေ့ကြပါစေ..." class="w-full bg-[#fcf9f2] border border-[#d4be96] rounded-xl px-3.5 py-2.5 text-sm text-[#332927] focus:outline-none focus:border-[#8f2d36] resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-full bg-[#8f2d36] text-white text-xs font-semibold shadow-md hover:bg-[#732129] active:scale-[0.99] transition">
+                        ဆုတောင်းစကား ပေးပို့မည်
+                    </button>
+                </form>
+
+                <!-- Submitted Wishes Guestbook Display -->
+                <div class="mt-7 pt-5 border-t border-[#e6d7bd]">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-bold text-[#8f2d36]">ဆုမွန်ကောင်းများ (<span id="wishes-count">0</span>)</h4>
+                        <span class="text-[10px] text-[#70605c]">အမှတ်တရ မှတ်တမ်း</span>
+                    </div>
+                    <div id="wishes-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                        <!-- Rendered via JS from localStorage -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. FOOTER -->
+            <footer class="text-center pt-2 pb-12 space-y-3">
+                <div class="wax-seal w-14 h-14 rounded-full mx-auto flex items-center justify-center">
+                    <span class="font-serif-mm text-xs font-bold text-[#f7e3b5]">စ & မ</span>
+                </div>
+
+                <p class="text-xs leading-relaxed text-[#70605c]">
+                    ကြွရောက် ချီးမြှင့်ပေးမည့်အတွက်<br>
+                    အထူးပင် ကျေးဇူးတင်ရှိပါသည်
+                </p>
+
+                <h4 class="font-serif-mm text-base font-bold text-[#8f2d36]">မောင်စိုးမိုးထိုက် & မမြတ်မိုးအိမ်</h4>
+                <p class="text-xs tracking-[0.2em] text-[#c59b47] font-semibold">၃ . ၁၂ . ၂၀၂၆ — ၄ . ၁၂ . ၂၀၂၆</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#332927] text-white text-xs px-5 py-3 rounded-full shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 whitespace-nowrap">
+        ကူးယူပြီးပါပြီ
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC                           -->
+    <!-- ========================================== -->
+    <script>
+        // Convert English numbers to Burmese digits
+        const mmDigits = ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'];
+        function toMM(num) {
+            return String(num).replace(/\d/g, d => mmDigits[d]);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 2800);
+        }
+
+        // 1. Floating Petals Generator
+        function createPetals() {
+            const container = document.getElementById('petals-container');
+            const colors = ['#e8b4b8', '#f5d6ba', '#e5c27b', '#f2c6c2'];
+            for (let i = 0; i < 14; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.animationDuration = (8 + Math.random() * 7) + 's';
+                petal.style.animationDelay = (Math.random() * 6) + 's';
+                const size = 10 + Math.random() * 8;
+                const color = colors[i % colors.length];
+                petal.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M12 2C8 6 4 10 4 15a8 8 0 0 0 16 0c0-5-4-9-8-13z"/></svg>`;
+                container.appendChild(petal);
+            }
+        }
+
+        // 2. Web Audio API Gentle Romantic Wedding Melody
+        let audioCtx = null;
+        let isPlaying = false;
+        let melodyInterval = null;
+
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (!isPlaying) {
+                startWeddingMelody();
+                isPlaying = true;
+                icon.className = 'fa-solid fa-music text-sm animate-pulse';
+                showToast('မင်္ဂလာ တေးသံသာ ဖွင့်ထားပါသည်');
+            } else {
+                stopWeddingMelody();
+                isPlaying = false;
+                icon.className = 'fa-solid fa-volume-xmark text-sm';
+                showToast('တေးသံသာ ပိတ်လိုက်ပါပြီ');
+            }
+        }
+
+        function startWeddingMelody() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            // Canon in D inspired gentle chime notes (Hz)
+            const notes = [587.33, 440.00, 493.88, 369.99, 392.00, 293.66, 392.00, 440.00];
+            let step = 0;
+
+            function playNote() {
+                if (!isPlaying) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(notes[step % notes.length], audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1.45);
+                step++;
+            }
+
+            playNote();
+            melodyInterval = setInterval(playNote, 1100);
+        }
+
+        function stopWeddingMelody() {
+            if (melodyInterval) clearInterval(melodyInterval);
+        }
+
+        // 3. Open Wax Seal Envelope
+        function openInvitation() {
+            const overlay = document.getElementById('envelope-overlay');
+            const sealBtn = document.getElementById('wax-seal-btn');
+            const mainContent = document.getElementById('main-content');
+
+            sealBtn.classList.add('cracking');
+
+            // Automatically start gentle music on user tap
+            if (!isPlaying) {
+                toggleMusic();
+            }
+
+            setTimeout(() => {
+                overlay.classList.add('envelope-opened');
+                mainContent.classList.remove('opacity-0');
+            }, 350);
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 1500);
+        }
+
+        // 4. December 2026 Calendar (Dec 1, 2026 is Tuesday -> 2 leading empty slots)
+        // Highlighting BOTH Dec 3 and Dec 4
+        function initCalendar() {
+            const grid = document.getElementById('calendar-days');
+            for (let i = 0; i < 2; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+            for (let day = 1; day <= 31; day++) {
+                const cell = document.createElement('div');
+                if (day === 3 || day === 4) {
+                    cell.innerHTML = `<span class="inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-[#f7e3b5] bg-[#c59b47] font-bold text-[#332927] shadow">${toMM(day)}</span>`;
+                } else {
+                    cell.textContent = toMM(day);
+                    cell.className = 'text-[#f2d9b3] py-1';
+                }
+                grid.appendChild(cell);
+            }
+        }
+
+        // 5. Live Countdown to December 3, 2026 at 09:00 AM MMT (+06:30)
+        function startCountdown() {
+            const target = new Date('2026-12-03T09:00:00+06:30').getTime();
+
+            function update() {
+                const now = new Date().getTime();
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    ['cd-days', 'cd-hours', 'cd-mins', 'cd-secs'].forEach(id => {
+                        document.getElementById(id).textContent = '၀၀';
+                    });
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('cd-days').textContent = toMM(String(days).padStart(2, '0'));
+                document.getElementById('cd-hours').textContent = toMM(String(hours).padStart(2, '0'));
+                document.getElementById('cd-mins').textContent = toMM(String(mins).padStart(2, '0'));
+                document.getElementById('cd-secs').textContent = toMM(String(secs).padStart(2, '0'));
+            }
+
+            update();
+            setInterval(update, 1000);
+        }
+
+        // 6. Draw Wave Money Styled QR Code on Canvas
+        function drawWaveQRCode() {
+            const canvas = document.getElementById('wave-qr-canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 180;
+            const modules = 25;
+            const cell = size / modules;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            ctx.fillStyle = '#0054a6';
+
+            let seed = 942893588;
+            function rand() {
+                seed = (seed * 9301 + 49297) % 233280;
+                return seed / 233280;
+            }
+
+            for (let r = 0; r < modules; r++) {
+                for (let c = 0; c < modules; c++) {
+                    if ((r < 7 && c < 7) || (r < 7 && c >= modules - 7) || (r >= modules - 7 && c < 7)) continue;
+                    if (r >= 9 && r <= 15 && c >= 9 && c <= 15) continue;
+                    if (rand() > 0.48) {
+                        ctx.fillRect(c * cell, r * cell, cell - 0.5, cell - 0.5);
+                    }
+                }
+            }
+
+            function drawFinder(x, y) {
+                ctx.fillStyle = '#0054a6';
+                ctx.fillRect(x, y, 7 * cell, 7 * cell);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x + cell, y + cell, 5 * cell, 5 * cell);
+                ctx.fillStyle = '#0054a6';
+                ctx.fillRect(x + 2 * cell, y + 2 * cell, 3 * cell, 3 * cell);
+            }
+
+            drawFinder(0, 0);
+            drawFinder((modules - 7) * cell, 0);
+            drawFinder(0, (modules - 7) * cell);
+
+            // Center Wave Badge
+            ctx.fillStyle = '#f7d000';
+            ctx.beginPath();
+            ctx.roundRect(size / 2 - 24, size / 2 - 14, 48, 28, 7);
+            ctx.fill();
+            ctx.fillStyle = '#0054a6';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Wave', size / 2, size / 2);
+        }
+
+        function copyWaveNumber() {
+            const temp = document.createElement('textarea');
+            temp.value = '09428935889';
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('WavePay နံပါတ် 09428935889 ကို ကူးယူပြီးပါပြီ');
+        }
+
+        function downloadWaveQR() {
+            const canvas = document.getElementById('wave-qr-canvas');
+            const link = document.createElement('a');
+            link.download = 'SoeMoeHtike_WavePay_QR.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('WavePay QR Code ပုံကို သိမ်းဆည်းပြီးပါပြီ');
+        }
+
+        // 7. RSVP & Wishes Guestbook (localStorage)
+        const STORAGE_KEY = 'soe_moe_htike_wedding_wishes_v1';
+        let guestCount = 2;
+
+        const defaultWishes = [
+            {
+                name: 'ကိုကျော်ဇင် နှင့် မသူဇာ',
+                status: 'တက်ရောက်ပါမည်',
+                count: 2,
+                wish: 'မောင်စိုးမိုးထိုက် နဲ့ မမြတ်မိုးအိမ် တို့ ရာသက်ပန် အိုအောင်မင်းအောင် ပေါင်းဖက်နိုင်ကြပါစေ 💖'
+            },
+            {
+                name: 'ဒေါ်ခင်မာရီ မိသားစု',
+                status: 'တက်ရောက်ပါမည်',
+                count: 3,
+                wish: 'သာယာချမ်းမြေ့တဲ့ မိသားစုဘဝလေး ပိုင်ဆိုင်နိုင်ပါစေ သားနဲ့သမီးရေ'
+            }
+        ];
+
+        function getWishes() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                return saved ? JSON.parse(saved) : defaultWishes;
+            } catch (e) {
+                return defaultWishes;
+            }
+        }
+
+        function saveWishes(list) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            } catch (e) {
+                // Ignore storage quota errors
+            }
+        }
+
+        function changeCount(delta) {
+            guestCount = Math.max(1, Math.min(15, guestCount + delta));
+            document.getElementById('count-display').textContent = toMM(guestCount);
+        }
+
+        function toggleGuestCount(show) {
+            document.getElementById('guest-count-box').style.display = show ? 'block' : 'none';
+        }
+
+        function handleRsvpSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('guest-name').value.trim();
+            const status = document.querySelector('input[name="attendance"]:checked').value;
+            const wish = document.getElementById('guest-wish').value.trim();
+
+            if (!name || !wish) return;
+
+            const list = getWishes();
+            list.unshift({
+                name,
+                status,
+                count: status === 'တက်ရောက်ပါမည်' ? guestCount : 0,
+                wish
+            });
+            saveWishes(list);
+            renderWishes();
+
+            document.getElementById('rsvp-form').reset();
+            guestCount = 2;
+            document.getElementById('count-display').textContent = toMM(2);
+            toggleGuestCount(true);
+            showToast('ဆုတောင်းစကား ပေးပို့ပြီးပါပြီ ကျေးဇူးတင်ပါသည်');
+        }
+
+        function renderWishes() {
+            const list = getWishes();
+            const container = document.getElementById('wishes-list');
+            document.getElementById('wishes-count').textContent = toMM(list.length);
+            container.innerHTML = '';
+
+            list.forEach(item => {
+                const badgeClass = item.status === 'တက်ရောက်ပါမည်'
+                    ? 'bg-[#e6efe2] text-[#3d5733]'
+                    : 'bg-[#f2e6e6] text-[#8f2d36]';
+                const countLabel = item.status === 'တက်ရောက်ပါမည်' ? ` (${toMM(item.count)} ဦး)` : '';
+
+                const card = document.createElement('div');
+                card.className = 'bg-[#fcf9f2] border border-[#e6d7bd] rounded-2xl p-3 space-y-1';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-bold text-[#332927]">${escapeHtml(item.name)}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 ${badgeClass}">${escapeHtml(item.status)}${countLabel}</span>
+                    </div>
+                    <p class="text-xs text-[#544643] leading-relaxed">${escapeHtml(item.wish)}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Initialize Everything
+        window.onload = function() {
+            createPetals();
+            initCalendar();
+            startCountdown();
+            drawWaveQRCode();
+            renderWishes();
+        };
+    </script>
+</body>
+</html>
